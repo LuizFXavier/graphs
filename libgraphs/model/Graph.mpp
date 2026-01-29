@@ -1,0 +1,93 @@
+export module graphs;
+import std;
+
+namespace graphs {
+
+export template <typename V>
+class VertexVector{
+
+  std::vector<V> _vertexes;
+  int _total_vertexes{};
+
+public:
+  void set_total_vertexes(int v){
+    _total_vertexes = v;
+    _vertexes.reserve(v);
+  }
+  using vertex_type = V;
+
+  void add_vertex(V vertex){
+    _vertexes.push_back(vertex);
+  }
+};
+
+export template <typename E>
+class EdgeAdjacencyList{
+
+  std::vector<std::vector<E>> _edges;
+  int _total_vertexes{};
+
+public:
+  using edge_type = E;
+  
+  void set_total_vertexes(int v){
+    _total_vertexes = v;
+    _edges.resize(v);
+  }
+
+  void add_edge(E edge, int source){
+    std::cout << _edges.capacity() << "\n";
+    this->_edges.at(source).push_back(edge);
+  }
+
+};
+
+export template <typename VC, typename EC>
+class Graph{
+
+  VC _vertexes;
+  EC _edges;
+
+  void set_total_vertexes(int v){
+    _vertexes.set_total_vertexes(v);
+    _edges.set_total_vertexes(v);
+  }
+
+public:
+  using vertex_type = VC::vertex_type;
+  using edge_type = EC::edge_type;
+  
+  Graph(int total_vertexes){
+    this->set_total_vertexes(total_vertexes);
+  }
+
+  void add_vertex(vertex_type vertex){
+    this->_vertexes.add_vertex(vertex);
+  };
+  void add_edge(edge_type edge, int source){
+    this->_edges.add_edge(edge, source);
+  };
+};
+
+
+} // namespace graphs
+
+class Vertex{
+  public:
+  int value;
+};
+
+
+class Edge{
+  int _dest;
+  int _weight;
+
+public:
+
+  Edge(int dest, int weight):_dest(dest), _weight(weight){}
+  int dest(){return _dest;}
+  int weight(){return _weight;}
+};
+
+
+
