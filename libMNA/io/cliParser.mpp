@@ -1,0 +1,59 @@
+#include <cstdlib>
+module;
+
+#include <string>
+#include <cstring>
+#include <unordered_map>
+export module libMNA.io.cliParser;
+
+namespace mna {
+
+export struct Target_folder{
+  std::string input_folder;
+  std::string output_folder;
+};
+
+void
+display_help(){
+
+}
+
+export Target_folder
+read_CLI(int argc, char* argv[], std::unordered_map<std::string, std::string>& map){
+  
+  auto valid_argument = [&](const char* b, int i){
+    return i+1 < argc && std::strcmp(argv[i], b) == 0;
+  };
+
+  auto is_help = [&](int i){
+    return std::strcmp(argv[i], "-h") == 0 || std::strcmp(argv[i], "--help");
+  };
+
+  mna::Target_folder targets{};
+
+  for(int i = 1; i < argc; ++i){
+
+    if(is_help(i)){
+      display_help();
+      std::exit(0);
+    }
+    if (valid_argument("--in", i) || valid_argument("--input", i)){
+      targets.input_folder = std::string(argv[i+1]);
+      ++i;
+    }
+    else if(valid_argument("--out", i) || valid_argument("--output", i)){
+      targets.output_folder = std::string(argv[i+1]); 
+      ++i;
+    }
+    else if (i+1 < argc){
+      map[argv[i]] = std::string(argv[i+1]);
+      ++i;
+    }
+
+  }
+
+}
+
+
+
+} // namespace mna
