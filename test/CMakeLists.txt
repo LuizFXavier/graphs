@@ -1,14 +1,13 @@
-add_executable(test)
 
-target_sources(test
+add_executable(cliTest)
+
+target_sources(cliTest
   PRIVATE
-  main.cpp
+  unit/cliParser.test.cpp)
+
+target_link_libraries(cliTest
   PRIVATE
-  FILE_SET cxx_modules TYPE CXX_MODULES FILES
-  test-graph.mpp
+  libMNA
 )
 
-target_link_libraries(test
-  PRIVATE
-  libgraphs
-)
+add_test(NAME cli COMMAND cliTest)
