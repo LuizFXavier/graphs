@@ -1,4 +1,4 @@
-export module graphs;
+export module libgraphs.graphs;
 import std;
 
 namespace graphs {
