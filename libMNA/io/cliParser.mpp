@@ -1,57 +1,82 @@
-#include <cstdlib>
 module;
 
+#include <stdexcept>
 #include <string>
 #include <cstring>
 #include <unordered_map>
+#include <format>
+#include <iostream>
 export module libMNA.io.cliParser;
 
 namespace mna {
 
-export struct Target_folder{
-  std::string input_folder;
-  std::string output_folder;
+export struct Config{
+  std::string input_folder{};
+  std::string output_folder{};
+  bool showHelp{};
 };
 
-void
-display_help(){
+export using OptionsMap = std::unordered_map<std::string, std::string*>;
 
-}
+export Config
+read_CLI (int argc, char* argv[], const mna::OptionsMap extra_options = {}){
 
-export Target_folder
-read_CLI(int argc, char* argv[], std::unordered_map<std::string, std::string>& map){
+  using namespace std;
   
   auto valid_argument = [&](const char* b, int i){
-    return i+1 < argc && std::strcmp(argv[i], b) == 0;
+    return std::strcmp(argv[i], b) == 0;
   };
 
   auto is_help = [&](int i){
-    return std::strcmp(argv[i], "-h") == 0 || std::strcmp(argv[i], "--help");
+    return std::strcmp(argv[i], "-h") == 0 || std::strcmp(argv[i], "--help") == 0;
   };
 
-  mna::Target_folder targets{};
+  mna::Config targets{};
 
   for(int i = 1; i < argc; ++i){
 
+    string arg = argv[i];
     if(is_help(i)){
-      display_help();
-      std::exit(0);
+      targets.showHelp = true;
+      return targets;
     }
+
     if (valid_argument("--in", i) || valid_argument("--input", i)){
-      targets.input_folder = std::string(argv[i+1]);
+      if(i+1 > argc)
+        throw runtime_error(format("Error: {} option requires a directory path.", arg));
+
+      targets.input_folder = argv[i+1];
       ++i;
     }
+
     else if(valid_argument("--out", i) || valid_argument("--output", i)){
-      targets.output_folder = std::string(argv[i+1]); 
+      if(i+1 > argc)
+        throw runtime_error(format("Error: {} option requires a directory path.", arg));
+
+      targets.output_folder = argv[i+1]; 
       ++i;
     }
-    else if (i+1 < argc){
-      map[argv[i]] = std::string(argv[i+1]);
+
+    else if (extra_options.count(std::string(arg))){ 
+      if(i+1 > argc)
+        throw runtime_error(format("Error: {} option requires a value.", arg));
+
+      std::string* target_ptr = extra_options.at(arg);
+      *target_ptr = argv[i+1];
       ++i;
+    }
+    else{
+      throw runtime_error(format("Error: Unknown \'{}\' option.", arg));
     }
 
   }
+  if(targets.input_folder.empty())
+      throw runtime_error("Error: Missing --input option.");
 
+  if(targets.output_folder.empty())
+      throw runtime_error("Error: Missing --output option.");
+
+  return targets;
 }
 
 

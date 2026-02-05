@@ -7,7 +7,7 @@ target_sources(libMNA
   PUBLIC
   FILE_SET cxx_modules TYPE CXX_MODULES FILES
   model/IoTNetwork.mpp
-  io/commandLineParser.mpp
+  io/cliParser.mpp
   io/parquetReader.mpp
 )
 
