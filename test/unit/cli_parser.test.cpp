@@ -1,9 +1,8 @@
 #include <vector>
 #include <string>
 #include <stdexcept>
-#include <iostream>
 
-import libMNA.io.cliParser;
+import libMNA.io.cli_parser;
 
 using namespace std;
 

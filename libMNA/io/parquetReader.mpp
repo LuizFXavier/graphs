@@ -1,5 +1,0 @@
-export module libMNA.io.parquetReader;
-
-namespace mna {
-
-} // namespace mna

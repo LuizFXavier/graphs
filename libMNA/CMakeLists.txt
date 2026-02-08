@@ -6,9 +6,9 @@ add_library(libMNA)
 target_sources(libMNA
   PUBLIC
   FILE_SET cxx_modules TYPE CXX_MODULES FILES
-  model/IoTNetwork.mpp
-  io/cliParser.mpp
-  io/parquetReader.mpp
+  model/iot_network.mpp
+  io/cli_parser.mpp
+  io/ParquetReader.mpp
 )
 
 set_target_properties(libMNA PROPERTIES PREFIX "")

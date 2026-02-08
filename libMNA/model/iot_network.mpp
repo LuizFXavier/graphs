@@ -1,13 +1,13 @@
-export module libMNA.model.IoTNetwork;
+export module libMNA.model.iot_network;
 
 namespace mna {
 
-struct IoTEdge{
+struct IoTNode{
   int resource;
   int bandwidth;
 };
 
-struct IoTNode{
+struct IoTEdge{
   int latency;
 };
 

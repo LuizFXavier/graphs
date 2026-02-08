@@ -3,7 +3,7 @@ add_executable(cliTest)
 
 target_sources(cliTest
   PRIVATE
-  unit/cliParser.test.cpp)
+  unit/cli_parser.test.cpp)
 
 target_link_libraries(cliTest
   PRIVATE
