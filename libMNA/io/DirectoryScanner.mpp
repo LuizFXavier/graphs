@@ -1,3 +1,21 @@
 module;
-
+#include <filesystem>
+#include <vector>
 export module libMNA.io.directory_scanner;
+
+namespace mna {
+
+struct PathStructure{
+
+  std::filesystem::path nodes;
+  std::filesystem::path manifest;
+  std::vector<std::filesystem::path> jobs;
+  std::vector<std::filesystem::path> edges;
+};
+
+export class DirectoryScanner{
+  std::filesystem::path root_directory;
+  
+  std::vector<PathStructure> paths;
+};
+}
