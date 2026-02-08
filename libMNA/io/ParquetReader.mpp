@@ -7,5 +7,5 @@ export class ParquetReader{
   
   void read_vertexes();
   void read_edges();
-}
+};
 } // namespace mna
