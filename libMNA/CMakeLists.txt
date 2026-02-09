@@ -9,6 +9,7 @@ target_sources(libMNA
   model/iot_network.mpp
   io/cli_parser.mpp
   io/ParquetReader.mpp
+  io/directory_scanner.mpp
 )
 
 set_target_properties(libMNA PROPERTIES PREFIX "")
