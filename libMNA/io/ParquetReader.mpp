@@ -1,11 +1,20 @@
+module;
+#include <filesystem>
 export module libMNA.io.parquet_reader;
 
 namespace mna {
 
+namespace fs = std::filesystem;
+
 export class ParquetReader{
   
-  
-  void read_vertexes();
+  template<typename G>
+  void read_vertexes(fs::path nodes_file, G& graph);
   void read_edges();
 };
+
+template <typename G>
+void ParquetReader::read_vertexes(fs::path nodes_file, G& graph){
+
+}
 } // namespace mna
