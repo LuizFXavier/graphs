@@ -2,6 +2,12 @@
   "name": "graphs",
   "version": "1",
   "dependencies": [
-    "arrow"
+    {
+      "name":"arrow",
+      "features":[
+        "parquet",
+        "filesystem"
+      ]  
+    }
   ]
 }

@@ -4,6 +4,7 @@ set(CMAKE_CXX_STANDARD 23)
 add_library(libMNA)
 
 find_package(Arrow CONFIG REQUIRED)
+find_package(Parquet CONFIG REQUIRED)
 
 target_sources(libMNA
   PUBLIC
@@ -16,6 +17,8 @@ target_sources(libMNA
   PRIVATE
   io/ParquetReader.cpp
 )
-target_link_libraries(libMNA PRIVATE Arrow::arrow_static)
+target_link_libraries(libMNA PRIVATE 
+  Arrow::arrow_static
+  Parquet::parquet_static)
 
 set_target_properties(libMNA PROPERTIES PREFIX "")
