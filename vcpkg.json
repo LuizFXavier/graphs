@@ -1,4 +1,7 @@
 {
   "name": "graphs",
-  "version": "1"
+  "version": "1",
+  "dependencies": [
+    "arrow"
+  ]
 }
