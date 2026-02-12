@@ -23,3 +23,16 @@ target_link_libraries(dsTest
 )
 
 add_test(NAME directory_scanner COMMAND dsTest)
+
+add_executable(parquetReaderTest)
+
+target_sources(parquetReaderTest
+  PRIVATE
+  unit/parquet_reader.test.cpp)
+
+target_link_libraries(parquetReaderTest
+  PRIVATE
+  libMNA
+)
+
+add_test(NAME parquet_reader COMMAND parquetReaderTest)
