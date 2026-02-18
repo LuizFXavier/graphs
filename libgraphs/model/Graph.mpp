@@ -1,5 +1,6 @@
-export module libgraphs.graphs;
-import std;
+module;
+#include <vector>
+export module libgraphs.model.graph;
 
 namespace graphs {
 
@@ -19,6 +20,10 @@ public:
   void add_vertex(V vertex){
     _vertexes.push_back(vertex);
   }
+
+  auto vertex_count(){
+    return _vertexes.size();
+  }
 };
 
 export template <typename E>
@@ -26,6 +31,7 @@ class EdgeAdjacencyList{
 
   std::vector<std::vector<E>> _edges;
   int _total_vertexes{};
+  int _edge_count{};
 
 public:
   using edge_type = E;
@@ -36,8 +42,12 @@ public:
   }
 
   void add_edge(E edge, int source){
-    std::cout << _edges.capacity() << "\n";
     this->_edges.at(source).push_back(edge);
+    ++_edge_count;
+  }
+
+  int edge_count(){
+    return _edge_count;
   }
 
 };
@@ -67,6 +77,14 @@ public:
   void add_edge(edge_type edge, int source){
     this->_edges.add_edge(edge, source);
   };
+
+  auto vertex_count(){
+    return this->_vertexes.vertex_count();
+  }
+
+  auto edge_count(){
+    return this->_edges.edge_count();
+  }
 };
 
 
