@@ -36,3 +36,19 @@ target_link_libraries(parquetReaderTest
 )
 
 add_test(NAME parquet_reader COMMAND parquetReaderTest)
+
+add_executable(readNetworkTest)
+
+target_sources(readNetworkTest
+  PRIVATE
+  read_network/main.test.cpp)
+
+target_link_libraries(readNetworkTest
+  PRIVATE
+  libMNA
+  libgraphs
+)
+
+add_test(NAME read_network 
+  COMMAND readNetworkTest "--input" "${CMAKE_CURRENT_SOURCE_DIR}/MNAexample"
+  "--output" "${CMAKE_SOURCE_DIR}/output")
