@@ -33,5 +33,9 @@ main (int argc, char *argv[]) {
   pr.read_edges(edges_path, print_edges);
   cout << "\nJobs:\n";
   pr.read_jobs(jobs_path, print_jobs);
+
+  auto rows = pr.get_num_rows(nodes_path);
+
+  cout << "\nNumber of nodes: " << *(rows) << "\n";
   return 0;
 }
