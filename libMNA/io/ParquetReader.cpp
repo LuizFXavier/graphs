@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <memory>
 #include <vector>
 
 #include <arrow/io/api.h>
@@ -14,6 +15,17 @@ namespace mna {
 
 namespace fs = std::filesystem;
 
+arrow::Result<int64_t>
+ParquetReader::get_num_rows(fs::path file_path){
+
+  std::shared_ptr<arrow::io::ReadableFile> input_file;
+  ARROW_ASSIGN_OR_RAISE(input_file, arrow::io::ReadableFile::Open(file_path.string()));
+  std::unique_ptr<parquet::ParquetFileReader> reader = parquet::ParquetFileReader::Open(input_file);
+
+  std::shared_ptr<parquet::FileMetaData> metadata = reader->metadata();
+  return metadata->num_rows();
+  
+}
 arrow::Result<std::shared_ptr<arrow::Table>>
 ParquetReader::read_file(fs::path file_path){
 

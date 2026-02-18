@@ -6,7 +6,7 @@ module;
 #include <vector>
 
 #include <arrow/type_fwd.h>
-
+#include <arrow/result.h>
 export module libMNA.io.parquet_reader;
 
 namespace mna {
@@ -22,6 +22,7 @@ private:
   arrow::Result<std::shared_ptr<arrow::Table>> read_file(fs::path file_path);
 
 public:
+  arrow::Result<int64_t> get_num_rows(fs::path nodes_file);
   void read_vertexes(fs::path nodes_file, VertexCallback consume_vertex);
   void read_edges(std::vector<fs::path> edges_files, EdgeCallback consume_edge);
   void read_jobs(fs::path jobs_file, JobCallback consume_job);
