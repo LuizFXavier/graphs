@@ -21,4 +21,9 @@ target_link_libraries(libMNA PRIVATE
   Arrow::arrow_static
   Parquet::parquet_static)
 
+target_link_libraries(libMNA
+  PRIVATE
+  libgraphs
+)
+
 set_target_properties(libMNA PROPERTIES PREFIX "")
