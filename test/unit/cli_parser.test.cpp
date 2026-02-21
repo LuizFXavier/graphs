@@ -2,7 +2,7 @@
 #include <string>
 #include <stdexcept>
 
-import libMNA.io.cli_parser;
+import mna.io.cli_parser;
 
 using namespace std;
 

@@ -1,9 +1,9 @@
 #include <cstdint>
 #include <stdexcept>
-import libMNA.io.cli_parser;
-import libMNA.io.directory_scanner;
-import libMNA.io.parquet_reader;
-import libMNA.model.iot_network;
+import mna.io.cli_parser;
+import mna.io.directory_scanner;
+import mna.io.parquet_reader;
+import mna.model.iot_network;
 
 int
 main (int argc, char *argv[]) {

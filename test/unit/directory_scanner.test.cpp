@@ -2,7 +2,7 @@
 #include <fstream>
 #include <filesystem>
 #include <exception>
-import libMNA.io.directory_scanner;
+import mna.io.directory_scanner;
 
 namespace fs = std::filesystem;
 

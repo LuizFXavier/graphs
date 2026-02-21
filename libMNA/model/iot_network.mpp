@@ -1,5 +1,5 @@
-export module libMNA.model.iot_network;
-import libgraphs.model.graph; 
+export module mna.model.iot_network;
+import graphs.model.graph; 
 namespace mna {
 
 struct IoTNode{

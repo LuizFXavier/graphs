@@ -7,7 +7,7 @@ module;
 
 #include <arrow/type_fwd.h>
 #include <arrow/result.h>
-export module libMNA.io.parquet_reader;
+export module mna.io.parquet_reader;
 
 namespace mna {
 

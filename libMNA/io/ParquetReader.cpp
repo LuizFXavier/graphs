@@ -9,7 +9,7 @@
 #include <arrow/array.h>
 #include <arrow/table.h>
 #include <arrow/record_batch.h>
-import libMNA.io.parquet_reader;
+import mna.io.parquet_reader;
 
 namespace mna {
 

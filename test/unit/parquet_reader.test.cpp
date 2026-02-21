@@ -2,7 +2,7 @@
 #include <iostream>
 #include <filesystem>
 #include <vector>
-import libMNA.io.parquet_reader;
+import mna.io.parquet_reader;
 
 using namespace std;
 using namespace std::filesystem;

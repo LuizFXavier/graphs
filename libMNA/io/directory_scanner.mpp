@@ -7,7 +7,7 @@ module;
 #include <iostream>
 #include <stdexcept>
 #include <format>
-export module libMNA.io.directory_scanner;
+export module mna.io.directory_scanner;
 
 namespace fs = std::filesystem;
 
