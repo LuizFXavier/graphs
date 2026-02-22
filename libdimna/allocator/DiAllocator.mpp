@@ -1,0 +1,30 @@
+module;
+#include <cstdint>
+#include <vector>
+#include <memory>
+export module dimna.allocator.di_allocator;
+import mna.model.iot_network;
+
+namespace mna::di {
+
+struct Solution{
+  int64_t of;
+  std::vector<int> nodes;
+};
+
+export class DiAllocator{
+public:
+  DiAllocator(std::shared_ptr<IoTNetwork> network, int cut_sol, int cut_comb_nodes)
+  :network(network), cut_sol(cut_sol), cut_comb_nodes(cut_comb_nodes){}
+
+private:
+  std::shared_ptr<IoTNetwork> network;  
+  int cut_sol;
+  int cut_comb_nodes;
+  
+  std::vector<int32_t> get_latencies();
+  std::vector<int> preselect_nodes();
+  Solution find_best_comb(std::vector<int> valid_nodes);
+};
+
+} // dimna namespace
