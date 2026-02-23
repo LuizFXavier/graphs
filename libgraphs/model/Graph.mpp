@@ -50,6 +50,10 @@ public:
     return _edge_count;
   }
 
+  const std::vector<E>& get_node_edges(int node) const{
+    return _edges[node];
+  }
+
 };
 
 export template <typename VC, typename EC>
@@ -84,6 +88,10 @@ public:
 
   auto edge_count(){
     return this->_edges.edge_count();
+  }
+
+  const auto& get_node_edges(int node) const{
+    return this->_edges.get_node_edges(node);
   }
 };
 
