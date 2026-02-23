@@ -14,6 +14,7 @@ set(CMAKE_CXX_STANDARD 23)
 
 add_subdirectory(libgraphs)
 add_subdirectory(libMNA)
+add_subdirectory(libdimna)
 
 if (BUILD_TESTING)
   add_subdirectory(test)
