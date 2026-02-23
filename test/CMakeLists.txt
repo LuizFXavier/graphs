@@ -52,3 +52,18 @@ target_link_libraries(readNetworkTest
 add_test(NAME read_network 
   COMMAND readNetworkTest "--input" "${CMAKE_CURRENT_SOURCE_DIR}/MNAexample"
   "--output" "${CMAKE_SOURCE_DIR}/output")
+
+add_executable(latTest)
+
+target_sources(latTest
+  PRIVATE
+  unit/latencies.test.cpp)
+
+target_link_libraries(latTest
+  PRIVATE
+  libdimna
+)
+
+add_test(NAME latencies 
+  COMMAND latTest "--input" "${CMAKE_CURRENT_SOURCE_DIR}/MNAexample"
+  "--output" "${CMAKE_SOURCE_DIR}/output")
