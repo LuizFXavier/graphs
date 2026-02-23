@@ -56,8 +56,11 @@ main (int argc, char *argv[]) {
 
   auto latencies = allocator.get_latencies(jobsV[0].origin);
 
-  for (auto i : latencies){
-    std::cout << i << ", ";
+  int validation[] = {65, 25, 74, 31, 26, 77, 34, 48, 0, 21};
+
+  for (int i = 0; i < latencies.size(); ++i){
+    if(latencies[i] != validation[i])
+      throw std::runtime_error("Error: Mismatch on obtained latencies");
   }
   // std::cout << "\n" << jobsV.size() << "\n";
   return 0;
