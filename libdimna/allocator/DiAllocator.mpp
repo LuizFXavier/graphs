@@ -2,10 +2,17 @@ module;
 #include <cstdint>
 #include <vector>
 #include <memory>
+#include <queue>
+#include <iostream>
 export module dimna.allocator.di_allocator;
 import mna.model.iot_network;
+import mna.model.job;
 
 namespace mna::di {
+
+constexpr int64_t INF64 = 1LL << 40;
+constexpr int INF32 = 1 << 30;
+constexpr int t_c = 1;
 
 struct Solution{
   int64_t of;
@@ -16,15 +23,65 @@ export class DiAllocator{
 public:
   DiAllocator(std::shared_ptr<IoTNetwork> network, int cut_sol, int cut_comb_nodes)
   :network(network), cut_sol(cut_sol), cut_comb_nodes(cut_comb_nodes){}
+  DiAllocator() = default;
 
-private:
+  std::vector<Solution> run_mna_jobs(JobVector& jobs);
+//private:
   std::shared_ptr<IoTNetwork> network;  
   int cut_sol;
   int cut_comb_nodes;
   
-  std::vector<int32_t> get_latencies();
+  std::vector<int32_t> get_latencies(int source);
   std::vector<int> preselect_nodes();
   Solution find_best_comb(std::vector<int> valid_nodes);
 };
+
+// std::vector<Solution>
+// DiAllocator::run_mna_jobs(JobVector& jobs){
+// // TODO
+// }
+
+std::vector<int32_t>
+DiAllocator::get_latencies(int source){
+
+  struct nodePair{
+    int32_t latency;
+    int32_t node;
+  };
+
+  auto cmp = [](nodePair a, nodePair b){return a.latency > b.latency;};
+  std::priority_queue<nodePair, std::vector<nodePair>, decltype(cmp)> heap(cmp); 
+
+  std::vector<int32_t> latencies(network->vertex_count(), INF32);
+
+  
+  // Inclusion of source node
+  latencies[source] = 0;
+
+  heap.push(nodePair{0, source});
+  
+  while (!heap.empty()) {
+    auto [curr_lat, node] = heap.top();
+    heap.pop();
+    
+    if (curr_lat > latencies[node])
+      continue;
+    
+    // Getting all adjacent nodes
+    const auto& edges = network->get_node_edges(node);
+
+    // std::cout << "w:" << edges[0].latency << " t:" << edges[0].target;
+    // break;
+    for (auto [target, weight] : edges){
+      // Adds node back into the heap if the path is cheaper or includes it for the first time
+      if (latencies[target] > curr_lat + weight){
+        latencies[target] = curr_lat + weight;
+        heap.push(nodePair{latencies[target], target});
+      }
+    } 
+    // break;
+  }
+  return latencies;
+}
 
 } // dimna namespace
