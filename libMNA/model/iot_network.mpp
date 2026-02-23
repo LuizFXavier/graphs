@@ -10,8 +10,8 @@ struct IoTNode{
 };
 
 struct IoTEdge{
-  int latency;
   int target;
+  int latency;
 };
 
 export using IoTNetwork = graphs::Graph<graphs::VertexVector<IoTNode>, graphs::EdgeAdjacencyList<IoTEdge>>; 
