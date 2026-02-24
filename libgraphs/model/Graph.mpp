@@ -24,6 +24,14 @@ public:
   auto vertex_count(){
     return _vertexes.size();
   }
+  const auto& operator[](int i) const{
+    return _vertexes[i];
+  }
+
+  auto& operator[](int i){
+    return _vertexes[i];
+  }
+
 };
 
 export template <typename E>
@@ -50,9 +58,10 @@ public:
     return _edge_count;
   }
 
-  const std::vector<E>& get_node_edges(int node) const{
-    return _edges[node];
+  const std::vector<E>& get_vertex_edges(int v) const{
+    return _edges[v];
   }
+
 
 };
 
@@ -90,8 +99,16 @@ public:
     return this->_edges.edge_count();
   }
 
-  const auto& get_node_edges(int node) const{
-    return this->_edges.get_node_edges(node);
+  const auto& get_vertex_edges(int v) const{
+    return this->_edges.get_vertex_edges(v);
+  }
+
+  const VC& vertexes() const{
+    return _vertexes;
+  }
+
+  VC& vertexes(){
+    return _vertexes;
   }
 };
 
