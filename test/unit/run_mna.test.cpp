@@ -1,9 +1,11 @@
 #include <iostream>
 #include <vector>
+#include <memory>
 import mna.io.cli_parser;
 import mna.io.directory_scanner;
 import mna.io.parquet_reader;
 import mna.model.iot_network;
+import mna.model.job;
 import dimna.allocator.di_allocator;
 
 int
@@ -51,8 +53,10 @@ main (int argc, char *argv[]) {
 
   std::vector<mna::di::Solution> solutions = allocator.run_mna_jobs(jobsV);
 
+  std::cout << "T:" << solutions.size() << "\n";
+
   for (auto& s : solutions){
-    std::cout << s.of << " ["
+    std::cout << s.of << " [";
     for (auto n : s.nodes){
       std::cout << n << ", ";
     }
