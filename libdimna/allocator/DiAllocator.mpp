@@ -3,6 +3,10 @@ module;
 #include <vector>
 #include <memory>
 #include <queue>
+#include <set>
+#include <algorithm>
+#include <iterator>
+#include <utility>
 #include <iostream>
 export module dimna.allocator.di_allocator;
 import mna.model.iot_network;
@@ -13,8 +17,9 @@ namespace mna::di {
 constexpr int64_t INF64 = 1LL << 40;
 constexpr int INF32 = 1 << 30;
 constexpr int t_c = 1;
+constexpr int INVALID_NODE = -1;
 
-struct Solution{
+export struct Solution{
   int64_t of;
   std::vector<int> nodes;
 };
@@ -30,19 +35,175 @@ public:
   std::shared_ptr<IoTNetwork> network;  
   int cut_sol;
   int cut_comb_nodes;
-  
-  std::vector<int32_t> get_latencies(int source);
-  std::vector<int> preselect_nodes();
-  Solution find_best_comb(std::vector<int> valid_nodes);
+
+  void get_latencies(int origin, std::vector<int32_t>& latencies);
+  std::set<int> preselect_nodes(Job& job, std::vector<int32_t>& latencies);
+  Solution find_best_comb(Job& job, std::set<int>& valid_nodes, std::vector<int32_t>& latencies);
 };
 
-// std::vector<Solution>
-// DiAllocator::run_mna_jobs(JobVector& jobs){
-// // TODO
-// }
+std::vector<Solution>
+DiAllocator::run_mna_jobs(JobVector& jobs){
+  
+  int num_nodes = network->vertex_count();
+  std::vector<int32_t> latencies(num_nodes);
 
-std::vector<int32_t>
-DiAllocator::get_latencies(int source){
+  int num_jobs = jobs.size();
+  std::vector<Solution> solutions(num_jobs);
+
+  auto& nodes = network->vertexes();
+
+  for (auto& job : jobs){
+    auto origin = job.origin;
+    
+    get_latencies(origin, latencies);
+    
+    auto filtered_nodes = preselect_nodes(job, latencies);
+
+    Solution solution = find_best_comb(job, filtered_nodes, latencies);
+
+    if (solution.of < INF64){
+
+      // Mark valid nodes as busy and ignores placeholders values
+      for (int i = solution.nodes.size(); i >= 0; --i){
+
+        if (solution.nodes[i] < 0){
+          solution.nodes.pop_back();
+        }
+        else{
+          int n = solution.nodes[i];
+          nodes[n].busy = 1;
+        }
+      }
+      
+      solutions.push_back(solution);
+    }
+    // Sets to zero if no valid combination was found
+    else{
+      solutions.push_back({0, std::vector<int>()});
+    }
+    
+  }
+  return solutions;
+}
+
+Solution 
+DiAllocator::find_best_comb(mna::Job& job, std::set<int>& valid_nodes, std::vector<int32_t>& latencies){
+  int num_nodes = valid_nodes.size();
+  
+  std::vector<int> best_comb(cut_sol, INVALID_NODE);
+  auto best_OF = INF64;
+
+  const auto& nodes = network->vertexes();
+  
+  auto jr_job = job.resource;
+  auto jb_job = job.bandwidth;
+  auto l_job = job.latency - t_c;
+
+  for (auto it_i = valid_nodes.begin(); it_i != valid_nodes.end(); ++it_i){
+
+    int i = *it_i;
+    auto single_R = nodes[i].resource;
+    auto single_B = nodes[i].bandwidth;
+    auto single_L = latencies[i];
+    
+    if (single_R >= jr_job && single_B >= jb_job && single_L <= l_job){
+      auto f0 = single_R - jr_job;
+      auto f1 = single_B - jb_job;
+      auto f2 = l_job - single_L;
+
+      auto OF = (f0 * f0) + (f1 * f1) - f2;
+
+      if (OF < best_OF){
+        best_OF = OF;
+        best_comb[0] = i;
+        best_comb[1] = INVALID_NODE;
+      }
+    }
+    for (auto it_j = std::next(it_i); it_j != valid_nodes.end(); ++it_j){
+      int j = *it_j;
+      auto sum_R = single_R + nodes[j].resource;
+      auto sum_B = single_B + nodes[j].bandwidth;
+      auto sum_L = single_L + latencies[j];
+      
+      if (sum_R >= jr_job && sum_B >= jb_job && sum_L <= l_job){
+        auto f0 = single_R - jr_job;
+        auto f1 = single_B - jb_job;
+        auto f2 = l_job - single_L;
+
+        auto OF = (f0 * f0) + (f1 * f1) - f2;
+
+        if (OF < best_OF){
+          best_OF = OF;
+          best_comb[0] = i;
+          best_comb[1] = j;
+        }
+      }
+    }
+  }
+  return Solution{best_OF, std::move(best_comb)};
+}
+
+std::set<int>
+DiAllocator::preselect_nodes(mna::Job& job, std::vector<int32_t>& latencies){
+
+  std::set<int> valid_nodes;
+  int num_nodes = network->vertex_count();
+  int combs_found{};
+
+  auto& nodes = network->vertexes();
+
+  auto jr_job = job.resource;
+  auto jb_job = job.bandwidth;
+  auto l_job = job.latency - t_c;
+
+  for (int i = 0; i < num_nodes && combs_found < cut_comb_nodes; ++i){
+    if (static_cast<bool>(nodes[i].busy))
+      continue;
+    
+    auto single_R = nodes[i].resource;
+    auto single_B = nodes[i].bandwidth;
+    auto single_L = latencies[i];
+    
+    if (single_R >= jr_job && single_B >= jb_job && single_L <= l_job){
+        valid_nodes.insert(i);
+        ++combs_found;
+    }
+  }
+  // Looking for valid node combinations
+  for (int i = 0; i < num_nodes && combs_found < cut_comb_nodes; ++i){
+
+    if (static_cast<bool>(nodes[i].busy))
+      continue;
+
+    auto single_R = nodes[i].resource;
+    auto single_B = nodes[i].bandwidth;
+    auto single_L = latencies[i];
+
+    for (int j = i + 1; j < num_nodes && combs_found < cut_comb_nodes; ++j){
+
+      if (static_cast<bool>(nodes[j].busy))
+        continue;
+      
+      auto total_R = single_R + nodes[j].resource;
+      auto total_B = single_B + nodes[j].bandwidth;
+      auto max_L = std::max(single_L, latencies[j]);
+        
+      if (total_R >= jr_job && total_B >= jb_job && max_L <= l_job){
+    
+        valid_nodes.insert(i);
+        valid_nodes.insert(j);
+        ++combs_found;
+      }
+    }
+  }
+  return valid_nodes;
+}
+
+/* Sets latencies to hold the minimum latency path 
+ * from the origin node to all the other nodes.
+*/
+void
+DiAllocator::get_latencies(int origin, std::vector<int32_t>& latencies){
 
   struct nodePair{
     int32_t latency;
@@ -50,15 +211,15 @@ DiAllocator::get_latencies(int source){
   };
 
   auto cmp = [](nodePair a, nodePair b){return a.latency > b.latency;};
-  std::priority_queue<nodePair, std::vector<nodePair>, decltype(cmp)> heap(cmp); 
+  std::priority_queue<nodePair, std::vector<nodePair>, decltype(cmp)> heap(cmp);
 
-  std::vector<int32_t> latencies(network->vertex_count(), INF32);
-
+  // Resets the latencies vector
+  std::fill(latencies.begin(), latencies.end(), INF32);
   
-  // Inclusion of source node
-  latencies[source] = 0;
+  // Inclusion of origin node
+  latencies[origin] = 0;
 
-  heap.push(nodePair{0, source});
+  heap.push(nodePair{0, origin});
   
   while (!heap.empty()) {
     auto [curr_lat, node] = heap.top();
@@ -68,10 +229,8 @@ DiAllocator::get_latencies(int source){
       continue;
     
     // Getting all adjacent nodes
-    const auto& edges = network->get_node_edges(node);
+    const auto& edges = network->get_vertex_edges(node);
 
-    // std::cout << "w:" << edges[0].latency << " t:" << edges[0].target;
-    // break;
     for (auto [target, weight] : edges){
       // Adds node back into the heap if the path is cheaper or includes it for the first time
       if (latencies[target] > curr_lat + weight){
@@ -79,9 +238,7 @@ DiAllocator::get_latencies(int source){
         heap.push(nodePair{latencies[target], target});
       }
     } 
-    // break;
   }
-  return latencies;
 }
 
 } // dimna namespace
