@@ -48,24 +48,24 @@ DiAllocator::run_mna_jobs(JobVector& jobs){
   std::vector<int32_t> latencies(num_nodes);
 
   int num_jobs = jobs.size();
-  std::vector<Solution> solutions(num_jobs);
+  std::vector<Solution> solutions;
+  solutions.reserve(num_jobs);
 
   auto& nodes = network->vertexes();
 
   for (auto& job : jobs){
     auto origin = job.origin;
-    
     get_latencies(origin, latencies);
     
     auto filtered_nodes = preselect_nodes(job, latencies);
 
     Solution solution = find_best_comb(job, filtered_nodes, latencies);
-
+    
     if (solution.of < INF64){
 
       // Mark valid nodes as busy and ignores placeholders values
-      for (int i = solution.nodes.size(); i >= 0; --i){
-
+      for (int i = solution.nodes.size() - 1; i >= 0; --i){
+        
         if (solution.nodes[i] < 0){
           solution.nodes.pop_back();
         }
@@ -77,8 +77,8 @@ DiAllocator::run_mna_jobs(JobVector& jobs){
       
       solutions.push_back(solution);
     }
-    // Sets to zero if no valid combination was found
     else{
+    // Sets OF to zero if no valid combination was found
       solutions.push_back({0, std::vector<int>()});
     }
     
