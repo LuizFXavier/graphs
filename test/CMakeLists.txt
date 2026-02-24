@@ -67,3 +67,18 @@ target_link_libraries(latTest
 add_test(NAME latencies 
   COMMAND latTest "--input" "${CMAKE_CURRENT_SOURCE_DIR}/MNAexample"
   "--output" "${CMAKE_SOURCE_DIR}/output")
+
+add_executable(run_mnaTest)
+
+target_sources(run_mnaTest
+  PRIVATE
+  unit/run_mna.test.cpp)
+
+target_link_libraries(run_mnaTest
+  PRIVATE
+  libdimna
+)
+
+add_test(NAME run_mna_jobs
+  COMMAND latTest "--input" "${CMAKE_CURRENT_SOURCE_DIR}/MNAexample"
+  "--output" "${CMAKE_SOURCE_DIR}/output")

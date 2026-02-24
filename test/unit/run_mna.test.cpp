@@ -1,13 +1,9 @@
 #include <iostream>
-#include <cstdint>
-#include <memory>
-#include <set>
-#include <stdexcept>
+#include <vector>
 import mna.io.cli_parser;
 import mna.io.directory_scanner;
 import mna.io.parquet_reader;
 import mna.model.iot_network;
-import mna.model.job;
 import dimna.allocator.di_allocator;
 
 int
@@ -41,7 +37,6 @@ main (int argc, char *argv[]) {
   mna::JobVector jobsV;
 
   auto add_job = [&](int64_t jr, int64_t jb, int64_t jl, int64_t jo){
-    std::cout << jr << " " << jb << " " << jl << " " << jo << "\n";
     jobsV.push_back(mna::Job{jr, jb, jl, jo});
   };
 
@@ -52,32 +47,16 @@ main (int argc, char *argv[]) {
   int cut_comb_nodes = 8;
   int cut_sol = 2;
 
-  mna::di::DiAllocator allocator(network, 2, cut_comb_nodes);
-  
-  std::vector<int32_t> latencies(network->vertex_count());
-  allocator.get_latencies(jobsV[0].origin, latencies);
+  mna::di::DiAllocator allocator(network, cut_sol, cut_comb_nodes);
 
-  int validation_l[] = {65, 25, 74, 31, 26, 77, 34, 48, 0, 21};
+  std::vector<mna::di::Solution> solutions = allocator.run_mna_jobs(jobsV);
 
-  for (int i = 0; i < latencies.size(); ++i){
-    if(latencies[i] != validation_l[i])
-      throw std::runtime_error("Error: Mismatch on obtained latencies");
+  for (auto& s : solutions){
+    std::cout << s.of << " ["
+    for (auto n : s.nodes){
+      std::cout << n << ", ";
+    }
+    std::cout << "]\n";
   }
-
-  std::set<int> validation_n{0, 1, 2, 4, 5, 7, 8, 9};
-  
-  std::set<int> valid_nodes = allocator.preselect_nodes(jobsV[0], latencies);
-
-  for (auto i : validation_n){
-    if(!valid_nodes.contains(i))
-      throw std::runtime_error("Error: Valid node not include in the set");
-  };
-
-  auto [of, solution] = allocator.find_best_comb(jobsV[0], valid_nodes, latencies);
-  
-  for (auto i : solution)
-    std::cout<< i << ", ";
-  std::cout << "] "<< of << "\n";
-  // std::cout << "\n" << jobsV.size() << "\n";
   return 0;
 }
