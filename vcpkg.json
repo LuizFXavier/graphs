@@ -3,11 +3,12 @@
   "version": "1",
   "dependencies": [
     {
-      "name":"arrow",
-      "features":[
-        "parquet",
-        "filesystem"
-      ]  
-    }
+      "name": "arrow",
+      "features": [
+        "filesystem",
+        "parquet"
+      ]
+    },
+    "tabulate"
   ]
 }
