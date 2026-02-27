@@ -1,0 +1,64 @@
+module;
+#include <filesystem>
+#include <memory>
+#include <chrono>
+export module dimna.allocator.di_runner;
+import mna.model.iot_network;
+import mna.model.job;
+import dimna.allocator.di_allocator;
+import dimna.io.output_writer;
+import dimna.model.options;
+
+namespace mna::di{
+
+export struct Parameters{
+  int cut_sol;
+  int cut_comb_nodes;
+};
+export class DiRunner {
+public:
+  DiRunner(std::shared_ptr<IoTNetwork> network, Options opt)
+  :allocator(network, opt.cut_sol, opt.cut_comb_nodes), ow(opt.output_dir), numRunnings(opt.numRunnings){};
+  void run_mna_jobs_batch(JobVector& jobs);
+private:
+  DiAllocator allocator;
+  OutputWriter ow;
+  int numRunnings;
+  
+  void reset_nodes(){
+    allocator.reset_nodes();
+  }
+};
+
+void
+DiRunner::run_mna_jobs_batch(JobVector& jobs){
+  
+  auto di_calc = [](Job& j){
+    return;
+  };
+
+  InfoPayload info{allocator.cut_sol, allocator.cut_comb_nodes, 0, allocator.network->vertex_count()};
+
+  for (int r = 0; r < numRunnings; ++r){
+
+    info.curr_run = r;
+    
+    auto start = std::chrono::steady_clock::now();
+    
+    auto solutions = allocator.run_mna_jobs(jobs);
+
+    auto end = std::chrono::steady_clock::now();
+    std::chrono::duration<double> diff_in_seconds = end - start;
+    double exec_time = diff_in_seconds.count();
+
+    if (numRunnings - 1 == r)
+      ow.write_final_output(solutions, jobs, exec_time, info);
+    else
+        ow.write_output(solutions, jobs, exec_time, info);
+    
+    reset_nodes();
+  }
+  ow.reset_times();
+}
+
+}
