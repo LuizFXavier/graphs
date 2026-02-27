@@ -94,7 +94,7 @@ DiAllocator::find_best_comb(mna::Job& job, std::set<int>& valid_nodes, std::vect
   int num_nodes = valid_nodes.size();
   
   std::vector<int> best_comb(cut_sol, INVALID_NODE);
-  auto best_OF = INF64;
+  int64_t best_OF = INF64;
 
   const auto& nodes = network->vertexes();
   
@@ -110,9 +110,9 @@ DiAllocator::find_best_comb(mna::Job& job, std::set<int>& valid_nodes, std::vect
     auto single_L = latencies[i];
     
     if (single_R >= jr_job && single_B >= jb_job && single_L <= l_job){
-      auto f0 = single_R - jr_job;
-      auto f1 = single_B - jb_job;
-      auto f2 = l_job - single_L;
+      int64_t f0 = single_R - jr_job;
+      int64_t f1 = single_B - jb_job;
+      int64_t f2 = l_job - single_L;
 
       auto OF = (f0 * f0) + (f1 * f1) - f2;
 
@@ -129,9 +129,9 @@ DiAllocator::find_best_comb(mna::Job& job, std::set<int>& valid_nodes, std::vect
       auto sum_L = single_L + latencies[j];
       
       if (sum_R >= jr_job && sum_B >= jb_job && sum_L <= l_job){
-        auto f0 = single_R - jr_job;
-        auto f1 = single_B - jb_job;
-        auto f2 = l_job - single_L;
+        int64_t f0 = sum_R - jr_job;
+        int64_t f1 = sum_B - jb_job;
+        int64_t f2 = l_job - sum_L;
 
         auto OF = (f0 * f0) + (f1 * f1) - f2;
 
