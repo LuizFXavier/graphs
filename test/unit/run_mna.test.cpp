@@ -7,6 +7,8 @@ import mna.io.parquet_reader;
 import mna.model.iot_network;
 import mna.model.job;
 import dimna.allocator.di_allocator;
+import dimna.model.solution;
+import dimna.io.output_writer;
 
 int
 main (int argc, char *argv[]) {
@@ -55,12 +57,18 @@ main (int argc, char *argv[]) {
 
   std::cout << "T:" << solutions.size() << "\n";
 
-  for (auto& s : solutions){
-    std::cout << s.of << " [";
-    for (auto n : s.nodes){
-      std::cout << n << ", ";
-    }
-    std::cout << "]\n";
-  }
+  mna::di::OutputWriter ow(dir_config.output_folder);
+
+  int curr_runnings = 0;
+
+  ow.write_output(solutions, jobsV, 0, {cut_sol, cut_comb_nodes, curr_runnings, network->vertex_count()});
+
+  // for (auto& s : solutions){
+  //   std::cout << s.of << " [";
+  //   for (auto n : s.nodes){
+  //     std::cout << n << ", ";
+  //   }
+  //   std::cout << "]\n";
+  //}
   return 0;
 }
