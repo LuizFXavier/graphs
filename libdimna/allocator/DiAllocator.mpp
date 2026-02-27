@@ -11,6 +11,7 @@ module;
 export module dimna.allocator.di_allocator;
 import mna.model.iot_network;
 import mna.model.job;
+import dimna.model.solution;
 
 namespace mna::di {
 
@@ -18,11 +19,6 @@ constexpr int64_t INF64 = 1LL << 40;
 constexpr int INF32 = 1 << 30;
 constexpr int t_c = 1;
 constexpr int INVALID_NODE = -1;
-
-export struct Solution{
-  int64_t of;
-  std::vector<int> nodes;
-};
 
 export class DiAllocator{
 public:
@@ -39,6 +35,13 @@ public:
   void get_latencies(int origin, std::vector<int32_t>& latencies);
   std::set<int> preselect_nodes(Job& job, std::vector<int32_t>& latencies);
   Solution find_best_comb(Job& job, std::set<int>& valid_nodes, std::vector<int32_t>& latencies);
+
+  void reset_nodes(){
+    auto& nodes = network->vertexes();
+    for (int i = 0; i < network->vertex_count(); ++i){
+      nodes[i].busy = 0;
+    }
+  }
 };
 
 std::vector<Solution>
