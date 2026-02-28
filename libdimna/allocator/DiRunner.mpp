@@ -44,20 +44,11 @@ DiRunner::run_mna_jobs_batch(JobVector& jobs){
     return (c[0] * j.resource) + (c[1] * j.bandwidth) - (c[2] * j.latency);
   };
 
-  for(auto& j : jobs)
-    std::cout<< j.resource << ",";
-  
-  std::cout << "\n";
-
   std::sort(jobs.begin(), jobs.end(), 
             [&](const Job& a, const Job& b){
               return di(a) > di(b);
             });
 
-  for(auto& j : jobs)
-    std::cout<< j.resource << ",";
-  
-  std::cout << "\n";
   InfoPayload info{allocator.cut_sol, allocator.cut_comb_nodes, 0, allocator.network->vertex_count()};
 
   for (int r = 0; r < numRunnings; ++r){
