@@ -148,7 +148,7 @@ OutputWriter::write_final_output(std::vector<Solution>& sols, JobVector& jobs, d
   
   out_file << "First ignored:\n\n";
 
-  mean = v.size() - 1 == 0? 0 : std::accumulate(v.begin() +1, v.end(), 0.0)/ v.size();
+  mean = v.size() - 1 == 0? 0 : std::accumulate(v.begin() +1, v.end(), 0.0)/ (v.size() - 1);
   sd = v.size() - 1 < 2 ? 0 : std::transform_reduce(v.begin() +1, v.end(), 0.0, std::plus<>(),
                                   [mean](double x) { return (x - mean) * (x - mean); });
   
