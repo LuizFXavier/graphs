@@ -33,8 +33,8 @@ public:
   int cut_comb_nodes;
 
   void get_latencies(int origin, std::vector<int32_t>& latencies);
-  std::set<int> preselect_nodes(Job& job, std::vector<int32_t>& latencies);
-  Solution find_best_comb(Job& job, std::set<int>& valid_nodes, std::vector<int32_t>& latencies);
+  std::vector<int> preselect_nodes(Job& job, std::vector<int32_t>& latencies);
+  Solution find_best_comb(Job& job, std::vector<int>& valid_nodes, std::vector<int32_t>& latencies);
 
   void reset_nodes(){
     auto& nodes = network->vertexes();
@@ -90,7 +90,7 @@ DiAllocator::run_mna_jobs(JobVector& jobs){
 }
 
 Solution 
-DiAllocator::find_best_comb(mna::Job& job, std::set<int>& valid_nodes, std::vector<int32_t>& latencies){
+DiAllocator::find_best_comb(mna::Job& job, std::vector<int>& valid_nodes, std::vector<int32_t>& latencies){
   int num_nodes = valid_nodes.size();
   
   std::vector<int> best_comb(cut_sol, INVALID_NODE);
@@ -146,7 +146,7 @@ DiAllocator::find_best_comb(mna::Job& job, std::set<int>& valid_nodes, std::vect
   return Solution{best_OF, std::move(best_comb)};
 }
 
-std::set<int>
+std::vector<int>
 DiAllocator::preselect_nodes(mna::Job& job, std::vector<int32_t>& latencies){
 
   std::set<int> valid_nodes;
@@ -199,7 +199,7 @@ DiAllocator::preselect_nodes(mna::Job& job, std::vector<int32_t>& latencies){
       }
     }
   }
-  return valid_nodes;
+  return std::vector<int>(valid_nodes.begin(), valid_nodes.end());
 }
 
 /* Sets latencies to hold the minimum latency path 
