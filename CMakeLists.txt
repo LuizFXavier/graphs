@@ -12,6 +12,18 @@ set(CMAKE_CXX_MODULE_STD 1)
 
 set(CMAKE_CXX_STANDARD 23)
 
+option(ENABLE_COVERAGE "Activate flags for gcov" OFF)
+
+if(ENABLE_COVERAGE)
+    add_compile_options(--coverage -O0 -g)
+    add_link_options(--coverage)
+endif()
+
+if(ENABLE_GPROF)
+    add_compile_options(-pg -O3 -g) 
+    add_link_options(-pg)
+endif()
+
 add_subdirectory(libgraphs)
 add_subdirectory(libMNA)
 add_subdirectory(libdimna)
