@@ -7,7 +7,6 @@ module;
 export module dimna.allocator.di_runner;
 import mna.model.iot_network;
 import mna.model.job;
-import dimna.allocator.di_allocator;
 import dimna.io.output_writer;
 import dimna.model.options;
 
@@ -17,7 +16,8 @@ export struct Parameters{
   int cut_sol;
   int cut_comb_nodes;
 };
-export class DiRunner {
+export template<typename DiAllocator>
+class DiRunner {
 public:
   DiRunner(std::shared_ptr<IoTNetwork> network, Options opt)
   :allocator(network, opt.cut_sol, opt.cut_comb_nodes), ow(opt.output_dir), numRunnings(opt.numRunnings){};
@@ -37,8 +37,9 @@ private:
   const double c[3] = {(amp[0] * w[0])/amp_sum, (amp[1] * w[1])/amp_sum, (amp[2] * w[2])/amp_sum};
 };
 
+template <typename DiAllocator>
 void
-DiRunner::run_mna_jobs_batch(JobVector& jobs){
+DiRunner<DiAllocator>::run_mna_jobs_batch(JobVector& jobs){
   
   auto di = [&](const Job& j){
     return (c[0] * j.resource) + (c[1] * j.bandwidth) - (c[2] * j.latency);

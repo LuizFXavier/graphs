@@ -12,6 +12,7 @@ target_sources(libdimna
   io/OutputWriter.mpp
   model/Solution.mpp
   model/Options.mpp
+  policy/searcher/FixedSearcher.mpp
 )
 
 target_link_libraries(libdimna
