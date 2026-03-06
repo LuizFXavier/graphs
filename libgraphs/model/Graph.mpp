@@ -21,14 +21,14 @@ public:
     _vertexes.push_back(vertex);
   }
 
-  auto vertex_count(){
+  int vertex_count(){
     return _vertexes.size();
   }
-  const auto& operator[](int i) const{
+  const V& operator[](int i) const{
     return _vertexes[i];
   }
 
-  auto& operator[](int i){
+  V& operator[](int i){
     return _vertexes[i];
   }
 
