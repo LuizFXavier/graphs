@@ -51,7 +51,7 @@ scan_input_dir(std::string input_path){
     throw std::runtime_error(std::format("Error: {} is not a directory!", input_path));
   }
 
-  const std::regex base_pattern(R"(_\d+nds)");
+  const std::regex base_pattern(R"(\d+nds)");
   const std::regex nodes_pattern(R"(\w+_nodes)");
   const std::regex manifest_pattern(R"(\w+_manifest)");
   const std::regex edges_pattern(R"(\w+_edges_part\d+)");
